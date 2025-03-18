@@ -8,7 +8,11 @@
 
 import Foundation
 
-class LocationRepository {
+protocol LocationRepositoryProtocol {
+    func fetchLocations(query: String, completion: @escaping ([LocationResult]) -> Void)
+}
+
+class LocationRepository: LocationRepositoryProtocol {
     private let service: LocationService
 
     init(service: LocationService) {

@@ -35,10 +35,9 @@ class LocationService: NSObject, ObservableObject {
             .store(in: &cancellables)
     }
 
-    // MARK: - Fetch Locations Using MKLocalSearchCompleter (Completion-Based)
     func getLocations(query: String, completion: @escaping ([LocationResult]) -> Void) {
         if query.isEmpty {
-            completion([]) // Return empty results on empty query
+            completion([])
             return
         }
         searchSubject.send(query) // Send query to debounced pipeline
@@ -51,12 +50,11 @@ class LocationService: NSObject, ObservableObject {
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { // Delay to allow debounce
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             completionHandler(self.searchResults)
         }
     }
 
-    // MARK: - Fetch Location Details from MKLocalSearch
     private func fetchLocationDetails(for query: String, completion: @escaping (LocationResult?) -> Void) {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
