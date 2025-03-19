@@ -62,6 +62,7 @@ jobs:
       - name: Run SwiftLint
         run: swiftlint --strict
 
+      # ✅ Build and Run Tests with Code Coverage
       - name: Build and run tests
         run: |
           xcodebuild test \
@@ -70,6 +71,12 @@ jobs:
             -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
             -enableCodeCoverage YES \
             -resultBundlePath TestResults.xcresult | xcpretty && exit ${PIPESTATUS[0]}
+
+      # ✅ Generate Code Coverage Report (lcov)
+      - name: Generate Code Coverage Report (lcov format)
+        run: |
+          xcrun llvm-cov report $PROJECT_PATH/build/Debug-iphonesimulator/$PROJECT_NAME.app/ \
+            -instr-profile=$PROJECT_PATH/build/Debug-iphonesimulator/$PROJECT_NAME.app/codecov.profdata
 
       # ✅ Verify Test Results Exist
       - name: Verify Test Results Exist
