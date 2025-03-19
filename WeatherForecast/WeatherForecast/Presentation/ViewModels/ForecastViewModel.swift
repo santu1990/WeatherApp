@@ -50,7 +50,7 @@ class ForecastViewModel: ObservableObject {
     
     private func groupForecastData() {
         let grouped = Dictionary(grouping: weatherForeCastData?.list ?? []) { entry -> String in
-            let date = Date(timeIntervalSince1970: TimeInterval(entry.dt))
+            let date = Date(timeIntervalSince1970: TimeInterval(entry.timestamp))
             let formatter = DateFormatter()
             formatter.dateFormat = "EEE, MMM d"
             return formatter.string(from: date)

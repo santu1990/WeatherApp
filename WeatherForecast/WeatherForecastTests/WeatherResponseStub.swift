@@ -5,7 +5,6 @@
 //  Created by Santosh Singh on 18/03/25.
 //
 
-
 import XCTest
 import Combine
 @testable import WeatherForecast
@@ -17,11 +16,13 @@ struct WeatherResponseStub {
             weather: [
                 Weather(id: 1, main: "Clear", description: "clear sky", icon: "01d")
             ],
-            main: MainWeather(temp: 298.15, feelsLike: 295.7, tempMin: 295.0, tempMax: 300.0, pressure: 1013, humidity: 60, seaLevel: 600, grndLevel: 100),
+            main: MainWeather(temp: 298.15, feelsLike: 295.7, tempMin: 295.0,
+                              tempMax: 300.0, pressure: 1013, humidity: 60,
+                              seaLevel: 600, grndLevel: 100),
             visibility: 10000,
             wind: Wind(speed: 5.1, deg: 240, gust: 7.2),
             clouds: Clouds(all: 5),
-            dt: 1618300000, // Example timestamp
+            timestamp: 1618300000, // Example timestamp
             sys: SystemInfo(type: 1, id: 1, country: "IN", sunrise: 1618285800, sunset: 1618330200),
             timezone: 19800, // India Standard Time (IST)
             id: 1269515,
@@ -36,7 +37,7 @@ struct WeatherResponseStub {
         cnt: 5,
         list: [
             ForeCastWeatherEntry(
-                dt: 1713915600,
+                timestamp: 1713915600,
                 main: ForeCastMainWeather(
                     temp: 20.5,
                     feelsLike: 19.8,
@@ -57,7 +58,7 @@ struct WeatherResponseStub {
                 dtTxt: "2024-04-23 12:00:00"
             ),
             ForeCastWeatherEntry(
-                dt: 1714002000,
+                timestamp: 1714002000,
                 main: ForeCastMainWeather(
                     temp: 22.0,
                     feelsLike: 21.5,
@@ -78,7 +79,7 @@ struct WeatherResponseStub {
                 dtTxt: "2024-04-24 12:00:00"
             ),
             ForeCastWeatherEntry(
-                dt: 1714088400,
+                timestamp: 1714088400,
                 main: ForeCastMainWeather(
                     temp: 18.5,
                     feelsLike: 17.9,
@@ -99,7 +100,7 @@ struct WeatherResponseStub {
                 dtTxt: "2024-04-25 12:00:00"
             ),
             ForeCastWeatherEntry(
-                dt: 1714174800,
+                timestamp: 1714174800,
                 main: ForeCastMainWeather(
                     temp: 16.0,
                     feelsLike: 15.5,
@@ -120,7 +121,7 @@ struct WeatherResponseStub {
                 dtTxt: "2024-04-26 12:00:00"
             ),
             ForeCastWeatherEntry(
-                dt: 1714261200,
+                timestamp: 1714261200,
                 main: ForeCastMainWeather(
                     temp: 14.5,
                     feelsLike: 14.0,

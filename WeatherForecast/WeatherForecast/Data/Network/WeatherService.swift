@@ -21,4 +21,3 @@ class WeatherService: WeatherServiceProtocol {
             .eraseToAnyPublisher()
     }
 }
-

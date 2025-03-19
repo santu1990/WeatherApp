@@ -5,7 +5,6 @@
 //  Created by Santosh Singh on 18/03/25.
 //
 
-
 import XCTest
 import Combine
 @testable import WeatherForecast
@@ -19,7 +18,6 @@ class MockLocationRepository: LocationRepositoryProtocol {
         completion(mockLocationResults)
     }
 }
-
 
 class SearchLocationUseCaseTests: XCTestCase {
     var useCase: SearchLocationUseCaseProtocol!
@@ -76,4 +74,3 @@ class SearchLocationUseCaseTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 }
-

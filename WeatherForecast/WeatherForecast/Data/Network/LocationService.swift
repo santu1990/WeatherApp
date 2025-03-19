@@ -16,7 +16,7 @@ class LocationService: NSObject, ObservableObject {
     private var searchCompleter = MKLocalSearchCompleter()
     private var locationManager = CLLocationManager()
     private var cancellables = Set<AnyCancellable>()
-    private var searchSubject = PassthroughSubject<String, Never>() //Debounced search
+    private var searchSubject = PassthroughSubject<String, Never>() // Debounced search
 
     override init() {
         super.init()
@@ -61,7 +61,7 @@ class LocationService: NSObject, ObservableObject {
         request.resultTypes = .address
 
         let search = MKLocalSearch(request: request)
-        search.start { response, error in
+        search.start { response, _ in
             guard let response = response, let firstResult = response.mapItems.first,
                   let name = firstResult.placemark.locality ?? firstResult.placemark.name,
                   let coordinate = firstResult.placemark.location?.coordinate else {
@@ -96,7 +96,9 @@ extension LocationService: CLLocationManagerDelegate {
         guard let location = locations.last else { return }
         fetchCityName(from: location) { [weak self] cityName in
             if let cityName = cityName {
-                self?.currentLocation = LocationResult(title: cityName, latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+                self?.currentLocation = LocationResult(title: cityName,
+                                                       latitude: location.coordinate.latitude,
+                                                       longitude: location.coordinate.longitude)
             }
         }
         locationManager.stopUpdatingLocation()
@@ -134,7 +136,6 @@ extension LocationService: MKLocalSearchCompleterDelegate {
             self.searchResults = locationResults
         }
     }
-
 
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         print("Location search error: \(error.localizedDescription)")

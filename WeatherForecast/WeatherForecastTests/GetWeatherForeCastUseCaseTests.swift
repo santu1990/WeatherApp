@@ -9,19 +9,20 @@ import XCTest
 import Combine
 @testable import WeatherForecast
 
-
 // Create the mock class for WeatherForeCastRepositoryProtocol
 class MockWeatherForeCastRepository: WeatherRepositoryProtocol {
     var fetchCalled = false
 
-    func fetch<T>(endpoint: APIEndpoint, responseType: T.Type) -> AnyPublisher<T, Error> where T : Decodable {
+    func fetch<T>(endpoint: APIEndpoint, responseType: T.Type) -> AnyPublisher<T, Error> where T: Decodable {
         fetchCalled = true
 
         // Mock data to return for WeatherForeCastData
         let mockResponse = WeatherResponseStub.mockForecastData
         // Safely cast the mock response to the expected type T
         guard let response = mockResponse as? T else {
-            return Fail(error: NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to cast mock response to type T"]))
+            return Fail(error: NSError(domain: "MockError",
+                                       code: 1,
+                                       userInfo: [NSLocalizedDescriptionKey: "Failed to cast mock response to type T"]))
                 .eraseToAnyPublisher()
         }
         // Return the mock response as a publisher
@@ -77,4 +78,3 @@ class WeatherForeCastRepositoryTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 }
-

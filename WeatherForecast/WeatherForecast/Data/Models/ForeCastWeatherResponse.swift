@@ -5,7 +5,6 @@
 //  Created by Santosh Singh on 18/03/25.
 //
 
-
 import Foundation
 
 struct ForeCastWeatherResponse: Codable {
@@ -17,7 +16,7 @@ struct ForeCastWeatherResponse: Codable {
 }
 
 struct ForeCastWeatherEntry: Codable {
-    let dt: Int
+    let timestamp: Int
     let main: ForeCastMainWeather
     let weather: [ForeCastWeather]
     let clouds: ForeCastClouds
@@ -28,7 +27,8 @@ struct ForeCastWeatherEntry: Codable {
     let dtTxt: String
 
     enum CodingKeys: String, CodingKey {
-        case dt, main, weather, clouds, wind, visibility, pop, sys
+        case timestamp = "dt"
+        case main, weather, clouds, wind, visibility, pop, sys
         case dtTxt = "dt_txt"
     }
 }

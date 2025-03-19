@@ -1,0 +1,6 @@
+# .swiftlint.yml
+trailing_whitespace:
+  ignores_empty_lines: true  # Ignores trailing whitespace on empty lines
+
+disabled_rules:
+  - switch_case_alignment # Disable Swift 'switch' case indentation

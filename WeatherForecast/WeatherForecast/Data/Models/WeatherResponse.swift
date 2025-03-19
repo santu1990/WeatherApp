@@ -14,12 +14,17 @@ struct WeatherResponse: Codable {
     let visibility: Int
     let wind: Wind
     let clouds: Clouds
-    let dt: TimeInterval
+    let timestamp: TimeInterval
     let sys: SystemInfo
     let timezone: Int
     let id: Int
     let name: String
     let cod: Int
+
+    enum CodingKeys: String, CodingKey {
+        case timestamp = "dt"
+        case coord, weather, main, visibility, wind, clouds, sys, timezone, id, name, cod
+    }
 }
 
 struct Coordinates: Codable {

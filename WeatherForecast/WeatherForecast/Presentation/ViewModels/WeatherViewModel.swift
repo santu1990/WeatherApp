@@ -50,7 +50,7 @@ class WeatherViewModel: ObservableObject {
     func selectLocation(_ completion: MKLocalSearchCompletion) {
         let searchRequest = MKLocalSearch.Request(completion: completion)
         let search = MKLocalSearch(request: searchRequest)
-        search.start { response, error in
+        search.start { response, _ in
             guard let coordinate = response?.mapItems.first?.placemark.coordinate else { return }
             self.fetchWeather(lat: coordinate.latitude, lon: coordinate.longitude)
         }

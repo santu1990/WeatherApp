@@ -5,7 +5,6 @@
 //  Created by Santosh Singh on 18/03/25.
 //
 
-
 import SwiftUI
 import Combine
 
@@ -29,7 +28,8 @@ struct FiveDayForecastView: View {
 
                             HStack {
                                 if let firstEntry = entries.first {
-                                    Image(systemName: WeatherIconMapper.iconName(for: firstEntry.weather.first?.icon ?? ""))
+                                    Image(systemName: WeatherIconMapper
+                                        .iconName(for: firstEntry.weather.first?.icon ?? ""))
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 35, height: 35)
@@ -63,4 +63,3 @@ struct FiveDayForecastView: View {
         }
     }
 }
-

@@ -20,8 +20,10 @@ struct WeatherDashBoardView: View {
 
         let useCase = GetWeatherUseCase(repository: WeatherRepository(service: WeatherService()))
 
-        _weatherViewModel = StateObject(wrappedValue: WeatherViewModel(locationService: locationService, useCase: useCase))
-        _forecastViewModel = StateObject(wrappedValue: ForecastViewModel(locationService: locationService, useCase: useCase))
+        _weatherViewModel = StateObject(wrappedValue: WeatherViewModel(locationService: locationService,
+                                                                       useCase: useCase))
+        _forecastViewModel = StateObject(wrappedValue: ForecastViewModel(locationService: locationService,
+                                                                         useCase: useCase))
     }
 
     var body: some View {
@@ -64,7 +66,8 @@ struct WeatherDashBoardView: View {
                                 ForEach(searchViewModel.searchResults, id: \.id) { result in
                                     Button(action: {
                                         searchViewModel.selectLocation(result)
-                                        if let lat = searchViewModel.selectedLatitude, let lon = searchViewModel.selectedLongitude {
+                                        if let lat = searchViewModel.selectedLatitude,
+                                           let lon = searchViewModel.selectedLongitude {
                                             weatherViewModel.fetchWeather(lat: lat, lon: lon)
                                             forecastViewModel.fetchWeatherForeCast(lat: lat, lon: lon)
                                         }
@@ -72,16 +75,17 @@ struct WeatherDashBoardView: View {
                                         // Clear search list after a slight delay to allow the state change to propagate
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                             searchViewModel.searchResults = []
-                                            searchViewModel.locationQuery = ""  // Optional: Reset search query to clear the search bar
+                                            // Optional: Reset search query to clear the search bar
+                                            searchViewModel.locationQuery = ""
                                         }
-                                    }) {
+                                    }, label: {
                                         Text(result.title)
                                             .foregroundColor(.black)
                                             .padding()
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .background(Color.white.opacity(0.5))
                                             .cornerRadius(8)
-                                    }
+                                    })
                                 }
                             }
                             .padding()
@@ -104,11 +108,3 @@ struct WeatherDashBoardView: View {
     }
 
 }
-
-
-
-
-
-
-
-

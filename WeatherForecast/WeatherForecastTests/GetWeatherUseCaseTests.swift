@@ -5,7 +5,6 @@
 //  Created by Santosh Singh on 18/03/25.
 //
 
-
 import XCTest
 import Combine
 @testable import WeatherForecast
@@ -14,14 +13,16 @@ import Combine
 class MockWeatherRepository: WeatherRepositoryProtocol {
     var fetchCalled = false
 
-    func fetch<T>(endpoint: APIEndpoint, responseType: T.Type) -> AnyPublisher<T, Error> where T : Decodable {
+    func fetch<T>(endpoint: APIEndpoint, responseType: T.Type) -> AnyPublisher<T, Error> where T: Decodable {
         fetchCalled = true
 
         // Mock data to return for WeatherData
         let mockResponse = WeatherResponseStub.mockWeatherResponse
         // Safely cast the mock response to the expected type T
         guard let response = mockResponse as? T else {
-            return Fail(error: NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to cast mock response to type T"]))
+            return Fail(error: NSError(domain: "MockError",
+                                       code: 1,
+                                       userInfo: [NSLocalizedDescriptionKey: "Failed to cast mock response to type T"]))
                 .eraseToAnyPublisher()
         }
         // Return the mock response as a publisher
@@ -72,4 +73,3 @@ class WeatherRepositoryTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 }
-
