@@ -10,6 +10,10 @@ on:
       - main
       - develop
 
+env:
+  PROJECT_NAME: WeatherForecast
+  SCHEME_NAME: WeatherForecast
+
 jobs:
   test:
     runs-on: macos-latest
@@ -30,27 +34,43 @@ jobs:
           fi
 
       - name: Verify Project File Exists
-        run: ls -la
+        run: ls -R
 
-      - name: List Root Directory Contents
-        run: ls -la /
+      - name: Ensure Correct Working Directory
+        run: |
+          if [ -d "$PROJECT_NAME" ]; then
+            cd $PROJECT_NAME
+          fi
 
       - name: List All Files in Repository
         run: find . -type f
 
+      - name: Determine Project File Location
+        run: |
+          if [ -f "$PROJECT_NAME.xcodeproj/project.pbxproj" ]; then
+            echo "Project file found in root."
+            echo "PROJECT_PATH=$PROJECT_NAME.xcodeproj" >> $GITHUB_ENV
+          elif [ -f "$PROJECT_NAME/$PROJECT_NAME.xcodeproj/project.pbxproj" ]; then
+            echo "Project file found in $PROJECT_NAME directory."
+            echo "PROJECT_PATH=$PROJECT_NAME/$PROJECT_NAME.xcodeproj" >> $GITHUB_ENV
+          else
+            echo "Error: $PROJECT_NAME.xcodeproj not found!"
+            exit 1
+          fi
+
       - name: Build and run tests
         run: |
           xcodebuild test \
-            -project WeatherForecast.xcodeproj \
-            -scheme WeatherForecast \
+            -project $PROJECT_PATH \
+            -scheme $SCHEME_NAME \
             -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
             -enableCodeCoverage YES | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Run Unit Tests
         run: |
           xcodebuild test \
-            -project WeatherForecast.xcodeproj \
-            -scheme WeatherForecast \
+            -project $PROJECT_PATH \
+            -scheme $SCHEME_NAME \
             -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
-            -only-testing:WeatherForecastTests \
+            -only-testing:${SCHEME_NAME}Tests \
             -enableCodeCoverage YES | xcpretty && exit ${PIPESTATUS[0]}
