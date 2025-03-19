@@ -25,10 +25,19 @@ jobs:
         working-directory: WeatherForecast  # Change this if needed
         continue-on-error: true  # Prevent failure if no CocoaPods used
 
+      - name: List Available Simulators (Debugging Step)
+        run: xcrun simctl list devices
+
+      - name: Ensure "iOS CI" Simulator Exists
+        run: |
+          if ! xcrun simctl list devices | grep -q "iOS CI"; then
+            xcrun simctl create "iOS CI" com.apple.CoreSimulator.SimDeviceType.iPhone-14 com.apple.CoreSimulator.SimRuntime.iOS-17-0
+          fi
+
       - name: Build and run tests
         run: |
           xcodebuild test \
-            -workspace WeatherForecast.xcodeproj \  # Use -workspace OR -project
+            -project WeatherForecast.xcodeproj \  # Change to -workspace if using CocoaPods
             -scheme WeatherForecast \
-            -destination 'platform=iOS Simulator,name=iPhone 14,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
             -enableCodeCoverage YES | xcpretty && exit ${PIPESTATUS[0]}
