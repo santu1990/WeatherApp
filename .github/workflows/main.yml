@@ -72,11 +72,22 @@ jobs:
             -enableCodeCoverage YES \
             -resultBundlePath TestResults.xcresult | xcpretty && exit ${PIPESTATUS[0]}
 
-      # ✅ Generate Code Coverage Report (lcov)
+      # ✅ Generate Code Coverage Report (lcov format)
       - name: Generate Code Coverage Report (lcov format)
         run: |
-          xcrun llvm-cov report $PROJECT_PATH/build/Debug-iphonesimulator/$PROJECT_NAME.app/ \
-            -instr-profile=$PROJECT_PATH/build/Debug-iphonesimulator/$PROJECT_NAME.app/codecov.profdata
+          # Path to DerivedData folder (GitHub Actions default)
+          DERIVED_DATA_PATH=$HOME/Library/Developer/Xcode/DerivedData
+          
+          # Find the generated .profdata file
+          PROF_DATA_PATH=$(find $DERIVED_DATA_PATH -name "codecov.profdata" | head -n 1)
+          
+          if [ -z "$PROF_DATA_PATH" ]; then
+            echo "Error: No code coverage profile data found!"
+            exit 1
+          fi
+
+          # Generate the code coverage report using llvm-cov
+          xcrun llvm-cov report $PROF_DATA_PATH -instr-profile=$PROF_DATA_PATH
 
       # ✅ Verify Test Results Exist
       - name: Verify Test Results Exist
