@@ -70,17 +70,18 @@ jobs:
             -scheme $SCHEME_NAME \
             -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
             -enableCodeCoverage YES \
+            -derivedDataPath $HOME/DerivedData \
             -resultBundlePath TestResults.xcresult | xcpretty && exit ${PIPESTATUS[0]}
 
       # ✅ Generate Code Coverage Report (lcov format)
       - name: Generate Code Coverage Report (lcov format)
         run: |
           # Path to DerivedData folder (GitHub Actions default)
-          DERIVED_DATA_PATH=$HOME/Library/Developer/Xcode/DerivedData
-          
+          DERIVED_DATA_PATH=$HOME/DerivedData
+
           # Find the generated .profdata file
           PROF_DATA_PATH=$(find $DERIVED_DATA_PATH -name "codecov.profdata" | head -n 1)
-          
+
           if [ -z "$PROF_DATA_PATH" ]; then
             echo "Error: No code coverage profile data found!"
             exit 1
