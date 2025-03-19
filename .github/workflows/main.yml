@@ -96,9 +96,23 @@ jobs:
           # Verify if .profdata file is valid
           echo "Found profdata file at: $PROF_DATA_PATH"
 
+          # Specify the build products directory (this can vary based on your configuration)
+          BUILD_DIR=$(find $DERIVED_DATA_PATH -name "Build" -type d | head -n 1)
+
+          if [ -z "$BUILD_DIR" ]; then
+            echo "Error: No build directory found!"
+            exit 1
+          fi
+
           # Generate the code coverage report using llvm-cov (for HTML format)
           mkdir -p coverage-report
-          xcrun llvm-cov show -instr-profile=$PROF_DATA_PATH -format=html -output-dir=coverage-report
+          xcrun llvm-cov show \
+            -instr-profile=$PROF_DATA_PATH \
+            -format=html \
+            -output-dir=coverage-report \
+            -show-functions \
+            -use-color \
+            "$BUILD_DIR/Build/Products/Debug-iphonesimulator"  # Modify this path if needed.
 
           # Optional: Verify the content of the generated HTML report
           echo "HTML code coverage report generated in 'coverage-report' folder."
