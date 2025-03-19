@@ -1,3 +1,5 @@
+name: Build and Test WeatherForecast
+
 on:
   push:
     branches:
@@ -73,26 +75,29 @@ jobs:
             -derivedDataPath $HOME/DerivedData \
             -resultBundlePath TestResults.xcresult | xcpretty && exit ${PIPESTATUS[0]}
 
-      # ✅ Generate Code Coverage Report (lcov format)
+      # ✅ Verify Code Coverage Data Generation and Generate Report (lcov format)
       - name: Generate Code Coverage Report (lcov format)
         run: |
           # Path to DerivedData folder (GitHub Actions default)
           DERIVED_DATA_PATH=$HOME/DerivedData
-          
+
           # Verify the DerivedData path
           echo "DerivedData Path: $DERIVED_DATA_PATH"
-          
+
           # List contents of DerivedData for debugging
           ls -R $DERIVED_DATA_PATH
 
           # Find the generated .profdata file
           PROF_DATA_PATH=$(find $DERIVED_DATA_PATH -name "*.profdata" | head -n 1)
-          
+
           if [ -z "$PROF_DATA_PATH" ]; then
             echo "Error: No code coverage profile data found!"
             exit 1
           fi
-          
+
+          # Verify if .profdata file is valid
+          echo "Found profdata file at: $PROF_DATA_PATH"
+
           # Generate the code coverage report using llvm-cov
           xcrun llvm-cov report $PROF_DATA_PATH -instr-profile=$PROF_DATA_PATH
 
