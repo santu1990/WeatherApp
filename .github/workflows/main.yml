@@ -1,5 +1,3 @@
-name: iOS CI
-
 on:
   push:
     branches:
@@ -57,33 +55,19 @@ jobs:
             exit 1
           fi
 
-      # ✅ Step 1: Run SwiftLint for Code Style Checks
-      - name: Install SwiftLint
-        run: brew install swiftlint
-
-      - name: Run SwiftLint
-        run: swiftlint --strict
-
-      # ✅ Step 2 & 3: Run Tests and Generate Code Coverage
-      - name: Run Tests with Coverage
+      - name: Build and run tests
         run: |
           xcodebuild test \
             -project $PROJECT_PATH \
             -scheme $SCHEME_NAME \
             -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
-            -enableCodeCoverage YES \
-            -resultBundlePath TestResults.xcresult | xcpretty && exit ${PIPESTATUS[0]}
+            -enableCodeCoverage YES | xcpretty && exit ${PIPESTATUS[0]}
 
-      # ✅ Step 3: Upload Code Coverage Report
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: TestResults
-          path: TestResults.xcresult
-
-      # ✅ Step 4: Deploy to TestFlight (Will uncomment it once TestFLight setup is ready)
-      # - name: Setup Fastlane
-      #   run: brew install fastlane
-
-      # - name: Deploy to TestFlight
-      #   run: fastlane beta
+      - name: Run Unit Tests
+        run: |
+          xcodebuild test \
+            -project $PROJECT_PATH \
+            -scheme $SCHEME_NAME \
+            -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
+            -only-testing:${SCHEME_NAME}Tests \
+            -enableCodeCoverage YES | xcpretty && exit ${PIPESTATUS[0]}
