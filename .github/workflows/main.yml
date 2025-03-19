@@ -81,7 +81,7 @@ jobs:
           name: TestResults
           path: TestResults.xcresult
 
-      # ✅ Step 4: Deploy to TestFlight (Commented Out)
+      # ✅ Step 4: Deploy to TestFlight (Will uncomment it once TestFLight setup is ready)
       # - name: Setup Fastlane
       #   run: brew install fastlane
 
