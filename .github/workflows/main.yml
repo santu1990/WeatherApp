@@ -55,6 +55,13 @@ jobs:
             exit 1
           fi
 
+      # ✅ Run SwiftLint
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Run SwiftLint
+        run: swiftlint --strict
+
       - name: Build and run tests
         run: |
           xcodebuild test \
@@ -71,3 +78,17 @@ jobs:
             -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
             -only-testing:${SCHEME_NAME}Tests \
             -enableCodeCoverage YES | xcpretty && exit ${PIPESTATUS[0]}
+
+      # ✅ Upload Test Results
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: TestResults
+          path: TestResults.xcresult
+
+      # ✅ Deploy to TestFlight (Commented Out)
+      # - name: Setup Fastlane
+      #   run: brew install fastlane
+
+      # - name: Deploy to TestFlight
+      #   run: fastlane beta
