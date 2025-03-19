@@ -98,8 +98,12 @@ jobs:
           # Verify if .profdata file is valid
           echo "Found profdata file at: $PROF_DATA_PATH"
 
-          # Generate the code coverage report using llvm-cov
+          # Generate the code coverage report using llvm-cov (for lcov format)
           xcrun llvm-cov report $PROF_DATA_PATH -instr-profile=$PROF_DATA_PATH
+
+          # Optional: Generate lcov report (comment/uncomment based on preference)
+          # xcrun llvm-cov report -format=lcov $PROF_DATA_PATH > coverage.lcov
+          # echo "Code coverage lcov report generated"
 
       # ✅ Verify Test Results Exist
       - name: Verify Test Results Exist
