@@ -29,10 +29,28 @@ jobs:
             xcrun simctl create "iOS CI" "iPhone 14" "com.apple.CoreSimulator.SimRuntime.iOS-17-0"
           fi
 
+      - name: Verify Project File Exists
+        run: ls -la
+
+      - name: List Root Directory Contents
+        run: ls -la /
+
+      - name: List All Files in Repository
+        run: find . -type f
+
       - name: Build and run tests
         run: |
           xcodebuild test \
             -project WeatherForecast.xcodeproj \
             -scheme WeatherForecast \
             -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
+            -enableCodeCoverage YES | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Run Unit Tests
+        run: |
+          xcodebuild test \
+            -project WeatherForecast.xcodeproj \
+            -scheme WeatherForecast \
+            -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
+            -only-testing:WeatherForecastTests \
             -enableCodeCoverage YES | xcpretty && exit ${PIPESTATUS[0]}
