@@ -21,8 +21,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Xcode
-        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+      - name: Select Compatible Xcode Version
+        run: |
+          XCODE_VERSION=$(ls /Applications | grep "Xcode" | sort -r | head -n 1)
+          echo "Using Xcode version: $XCODE_VERSION"
+          sudo xcode-select -s /Applications/$XCODE_VERSION/Contents/Developer
 
       - name: List Available Simulators (Debugging Step)
         run: xcrun simctl list devices
@@ -56,6 +59,13 @@ jobs:
           else
             echo "Error: $PROJECT_NAME.xcodeproj not found!"
             exit 1
+          fi
+
+      - name: Ensure Xcode Project Compatibility
+        run: |
+          if [ -f "$PROJECT_PATH/project.pbxproj" ]; then
+            plutil -replace archiveVersion -integer 50 "$PROJECT_PATH/project.pbxproj"
+            echo "Updated project format to be compatible."
           fi
 
       - name: Build and run tests
