@@ -13,7 +13,7 @@ env:
   SCHEME_NAME: WeatherForecast
 
 jobs:
-  test:
+  build_and_test:
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -68,16 +68,16 @@ jobs:
             -project $PROJECT_PATH \
             -scheme $SCHEME_NAME \
             -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
-            -enableCodeCoverage YES | xcpretty && exit ${PIPESTATUS[0]}
+            -enableCodeCoverage YES \
+            -resultBundlePath TestResults.xcresult | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Run Unit Tests
+      # ✅ Verify Test Results Exist
+      - name: Verify Test Results Exist
         run: |
-          xcodebuild test \
-            -project $PROJECT_PATH \
-            -scheme $SCHEME_NAME \
-            -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
-            -only-testing:${SCHEME_NAME}Tests \
-            -enableCodeCoverage YES | xcpretty && exit ${PIPESTATUS[0]}
+          if [ ! -d "TestResults.xcresult" ]; then
+            echo "Error: TestResults.xcresult not found!"
+            exit 1
+          fi
 
       # ✅ Upload Test Results
       - name: Upload Test Results
