@@ -1,50 +1,50 @@
 name: CI Pipeline
 
 on:
-  push:
+    push:
     branches:
-      - main
-      - develop
-  pull_request:
+        - main
+        - develop
+    pull_request:
     branches:
-      - main
-      - develop
+        - main
+        - develop
 
 env:
-  PROJECT_NAME: WeatherForecast
-  SCHEME_NAME: WeatherForecast
+    PROJECT_NAME: WeatherForecast
+    SCHEME_NAME: WeatherForecast
 
 jobs:
-  build_and_test:
+    build_and_test:
     runs-on: macos-latest
     steps:
-      - name: Checkout code
+        - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Log Available Xcode Versions
+        - name: Log Available Xcode Versions
         run: ls /Applications | grep "Xcode"
 
-      - name: Select Compatible Xcode Version
+        - name: Select Compatible Xcode Version
         run: |
           XCODE_VERSION=$(ls /Applications | grep "Xcode" | sort -r | head -n 1)
           echo "Using Xcode version: $XCODE_VERSION"
           sudo xcode-select -s /Applications/$XCODE_VERSION/Contents/Developer
           xcodebuild -version
 
-      - name: List Available Simulators (Debugging Step)
+        - name: List Available Simulators (Debugging Step)
         run: xcrun simctl list devices
 
-      - name: Ensure "iOS CI" Simulator Exists
+        - name: Ensure "iOS CI" Simulator Exists
         run: |
           if ! xcrun simctl list devices | grep -q "iOS CI"; then
             xcrun simctl delete "iOS CI" || true
             xcrun simctl create "iOS CI" "iPhone 16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
           fi
 
-      - name: Verify Project File Exists
+        - name: Verify Project File Exists
         run: ls -R
 
-      - name: Determine Project File Location
+        - name: Determine Project File Location
         run: |
           if [ -f "$PROJECT_NAME.xcodeproj/project.pbxproj" ]; then
             echo "PROJECT_PATH=$PROJECT_NAME.xcodeproj" >> $GITHUB_ENV
@@ -54,17 +54,17 @@ jobs:
             echo "Error: $PROJECT_NAME.xcodeproj not found!" && exit 1
           fi
 
-      # ✅ Run SwiftLint
-      - name: Install SwiftLint
+        # ✅ Run SwiftLint
+        - name: Install SwiftLint
         run: brew install swiftlint
 
-      - name: Run SwiftLint
+        - name: Run SwiftLint
         run: swiftlint --strict
 
-      # ✅ Build and Run Tests with Code Coverage
-      - name: Build and run tests
+        # ✅ Build and Run Tests with Code Coverage
+        - name: Build and run tests
         run: |
-          xcodebuild test \
+            xcodebuild test \
             -project $PROJECT_PATH \
             -scheme $SCHEME_NAME \
             -destination 'platform=iOS Simulator,name=iOS CI,OS=latest' \
@@ -72,65 +72,65 @@ jobs:
             -derivedDataPath $HOME/DerivedData \
             -resultBundlePath TestResults.xcresult | xcpretty && exit ${PIPESTATUS[0]}
 
-      # ✅ Debug Step: List Build Output Files (Added Without Removing Anything)
-      - name: Debug List Build Output
+        # ✅ Debug Step: List Build Output Files (Added Without Removing Anything)
+        - name: Debug List Build Output
         run: |
           echo "Listing build output directory..."
           ls -R $HOME/DerivedData/Build/Products/Debug-iphonesimulator
 
-      # ✅ Verify Test Results Exist
-      - name: Verify Test Results Exist
+        # ✅ Verify Test Results Exist
+        - name: Verify Test Results Exist
         run: |
           if [ ! -d "TestResults.xcresult" ]; then
             echo "Error: TestResults.xcresult not found!" && exit 1
           fi
 
-      # ✅ Upload Test Results
-      - name: Upload Test Results
+        # ✅ Upload Test Results
+        - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
-          name: TestResults
-          path: TestResults.xcresult
+            name: TestResults
+            path: TestResults.xcresult
 
-      # ✅ Code Coverage (Still Commented Out, No Change)
-#      - name: Generate Code Coverage Report (HTML format)
-#        run: |
-#          DERIVED_DATA_PATH=$HOME/DerivedData
-#          echo "DerivedData Path: $DERIVED_DATA_PATH"
-#
-#          ls -R $DERIVED_DATA_PATH
-#
-#          PROF_DATA_PATH=$(find $DERIVED_DATA_PATH -name "Coverage.profdata" | head -n 1)
-#          if [ -z "$PROF_DATA_PATH" ]; then echo "Error: No coverage data found!" && exit 1; fi
-#
-#          echo "Found profdata file at: $PROF_DATA_PATH"
-#
-#          PRODUCT_DIR=$(find $DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator -type d -name "*.app" | head -n 1)
-#          EXECUTABLE_PATH="$PRODUCT_DIR/$PROJECT_NAME.app/$PROJECT_NAME"
-#          if [ ! -f "$EXECUTABLE_PATH" ]; then echo "Error: Executable not found at $EXECUTABLE_PATH" && exit 1; fi
-#
-#          mkdir -p coverage-report
-#          xcrun llvm-cov show \
-#            -instr-profile="$PROF_DATA_PATH" \
-#            --ignore-filename-regex="/usr/*" \
-#            --format=html \
-#            --output-dir=coverage-report \
-#            --show-regions \
-#            --use-color \
-#            "$EXECUTABLE_PATH"
-#
-#          echo "HTML code coverage report generated in 'coverage-report' folder."
-#
-#      # ✅ Upload Code Coverage HTML Report as Artifact
-#      - name: Upload Code Coverage HTML Report
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: coverage-report
-#          path: coverage-report
+        # ✅ Code Coverage (Still Commented Out, No Change)
+- name: Generate Code Coverage Report (HTML format)
+    run: |
+    DERIVED_DATA_PATH=$HOME/DerivedData
+    echo "DerivedData Path: $DERIVED_DATA_PATH"
 
-      # ✅ Deploy to TestFlight (Commented Out, No Change)
-      # - name: Setup Fastlane
-      #   run: brew install fastlane
+    ls -R $DERIVED_DATA_PATH
 
-      # - name: Deploy to TestFlight
-      #   run: fastlane beta
+    PROF_DATA_PATH=$(find $DERIVED_DATA_PATH -name "Coverage.profdata" | head -n 1)
+    if [ -z "$PROF_DATA_PATH" ]; then echo "Error: No coverage data found!" && exit 1; fi
+
+    echo "Found profdata file at: $PROF_DATA_PATH"
+
+    PRODUCT_DIR=$(find $DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator -type d -name "*.app" | head -n 1)
+    EXECUTABLE_PATH="$PRODUCT_DIR/$PROJECT_NAME"
+    if [ ! -f "$EXECUTABLE_PATH" ]; then echo "Error: Executable not found at $EXECUTABLE_PATH" && exit 1; fi
+
+    mkdir -p coverage-report
+    xcrun llvm-cov show \
+        -instr-profile="$PROF_DATA_PATH" \
+        --ignore-filename-regex="/usr/*" \
+        --format=html \
+        --output-dir=coverage-report \
+        --show-regions \
+        --use-color \
+        "$EXECUTABLE_PATH"
+
+    echo "HTML code coverage report generated in 'coverage-report' folder."
+
+        # ✅ Upload Code Coverage HTML Report as Artifact
+        - name: Upload Code Coverage HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+            name: coverage-report
+            path: coverage-report
+
+        # ✅ Deploy to TestFlight (Commented Out, No Change)
+        # - name: Setup Fastlane
+        #   run: brew install fastlane
+
+        # - name: Deploy to TestFlight
+        #   run: fastlane beta
