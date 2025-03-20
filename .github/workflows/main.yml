@@ -89,14 +89,8 @@ jobs:
           fi
           echo "Found profdata file at: $PROF_DATA_PATH"
 
-          BUILD_DIR=$(find $DERIVED_DATA_PATH -type d -name "Build" | head -n 1)
-          if [ -z "$BUILD_DIR" ]; then
-            echo "Error: No build directory found!"
-            exit 1
-          fi
-
-          PRODUCT_DIR=$(find $BUILD_DIR -type d -name "Debug-iphonesimulator" | head -n 1)
-          if [ -z "$PRODUCT_DIR" ]; then
+          PRODUCT_DIR="$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator"
+          if [ ! -d "$PRODUCT_DIR" ]; then
             echo "Error: No Debug-iphonesimulator directory found!"
             exit 1
           fi
@@ -110,8 +104,7 @@ jobs:
             --output-dir=coverage-report \
             --show-regions \
             --use-color \
-            "$PRODUCT_DIR/$PROJECT_NAME.app/$PROJECT_NAME"
-
+            "$PRODUCT_DIR"
           echo "HTML code coverage report generated in 'coverage-report' folder."
 
       # ✅ Upload HTML Code Coverage Report as Artifact
