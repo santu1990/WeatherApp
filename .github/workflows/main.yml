@@ -85,7 +85,7 @@ jobs:
 
           echo "Found profdata file at: $PROF_DATA_PATH"
 
-          PRODUCT_DIR="$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator"
+          PRODUCT_DIR=$(find $DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator -type d -name "*.app" | head -n 1)
           EXECUTABLE_PATH="$PRODUCT_DIR/$PROJECT_NAME"
           if [ ! -f "$EXECUTABLE_PATH" ]; then echo "Error: Executable not found at $EXECUTABLE_PATH" && exit 1; fi
 
