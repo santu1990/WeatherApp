@@ -78,43 +78,30 @@ jobs:
       # ✅ Verify Code Coverage Data Generation and Generate HTML Report
       - name: Generate Code Coverage Report (HTML format)
         run: |
-          # Path to DerivedData folder (GitHub Actions default)
           DERIVED_DATA_PATH=$HOME/DerivedData
-
-          # Verify the DerivedData path
           echo "DerivedData Path: $DERIVED_DATA_PATH"
-
-          # List contents of DerivedData for debugging
           ls -R $DERIVED_DATA_PATH
 
-          # Find the generated .profdata file
-          PROF_DATA_PATH=$(find $DERIVED_DATA_PATH -name "*.profdata" | head -n 1)
-
+          PROF_DATA_PATH=$(find $DERIVED_DATA_PATH -name "Coverage.profdata" | head -n 1)
           if [ -z "$PROF_DATA_PATH" ]; then
             echo "Error: No code coverage profile data found!"
             exit 1
           fi
-
           echo "Found profdata file at: $PROF_DATA_PATH"
 
-          # Find the correct build products directory
           BUILD_DIR=$(find $DERIVED_DATA_PATH -type d -name "Build" | head -n 1)
-          
           if [ -z "$BUILD_DIR" ]; then
             echo "Error: No build directory found!"
             exit 1
           fi
 
-          PRODUCT_DIR=$(find $BUILD_DIR/Products -type d -name "Debug-iphonesimulator" | head -n 1)
-
+          PRODUCT_DIR=$(find $BUILD_DIR -type d -name "Debug-iphonesimulator" | head -n 1)
           if [ -z "$PRODUCT_DIR" ]; then
             echo "Error: No Debug-iphonesimulator directory found!"
             exit 1
           fi
-
           echo "Build product directory: $PRODUCT_DIR"
 
-          # Generate the HTML code coverage report
           mkdir -p coverage-report
           xcrun llvm-cov show \
             -instr-profile="$PROF_DATA_PATH" \
@@ -123,7 +110,7 @@ jobs:
             --output-dir=coverage-report \
             --show-regions \
             --use-color \
-            "$PRODUCT_DIR"
+            "$PRODUCT_DIR/$PROJECT_NAME.app/$PROJECT_NAME"
 
           echo "HTML code coverage report generated in 'coverage-report' folder."
 
