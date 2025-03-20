@@ -19,8 +19,6 @@ WeatherForecast is a SwiftUI-based iOS application that provides real-time weath
 
 🧑‍💻 Fully configured CI/CD pipeline with SwiftLint & Unit Tests  
 
-📝 Code coverage report generation for better code quality  
-
 🔗 Pipeline badge showing the latest build status 
 
 🎨 SwiftUI-based modern UI
@@ -29,7 +27,7 @@ WeatherForecast is a SwiftUI-based iOS application that provides real-time weath
 
 ✅ CI/CD pipeline with automated tests and linting
 
-📊 Code coverage reports for test validation
+📊 Code coverage reports for test validation and report generation for better code quality.
 
 🏗 Architecture
 
