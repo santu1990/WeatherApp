@@ -18,12 +18,15 @@ jobs:
   build_and_test:
     runs-on: macos-latest
     steps:
+      # ✅ Checkout repository code
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # ✅ Log available Xcode versions
       - name: Log Available Xcode Versions
         run: ls /Applications | grep "Xcode"
 
+      # ✅ Select the latest compatible Xcode version
       - name: Select Compatible Xcode Version
         run: |
           XCODE_VERSION=$(ls /Applications | grep "Xcode" | sort -r | head -n 1)
@@ -31,9 +34,11 @@ jobs:
           sudo xcode-select -s /Applications/$XCODE_VERSION/Contents/Developer
           xcodebuild -version
 
+      # ✅ List available simulators for debugging
       - name: List Available Simulators (Debugging Step)
         run: xcrun simctl list devices
 
+      # ✅ Ensure the "iOS CI" simulator exists
       - name: Ensure "iOS CI" Simulator Exists
         run: |
           if ! xcrun simctl list devices | grep -q "iOS CI"; then
@@ -41,9 +46,11 @@ jobs:
             xcrun simctl create "iOS CI" "iPhone 16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
           fi
 
+      # ✅ Verify project file exists
       - name: Verify Project File Exists
         run: ls -R
 
+      # ✅ Determine the project file location
       - name: Determine Project File Location
         run: |
           if [ -f "$PROJECT_NAME.xcodeproj/project.pbxproj" ]; then
@@ -54,12 +61,15 @@ jobs:
             echo "Error: $PROJECT_NAME.xcodeproj not found!" && exit 1
           fi
 
+      # ✅ Install SwiftLint for code quality checks
       - name: Install SwiftLint
         run: brew install swiftlint
 
+      # ✅ Run SwiftLint to enforce coding style
       - name: Run SwiftLint
         run: swiftlint --strict
 
+      # ✅ Build and run unit tests with code coverage enabled
       - name: Build and run tests
         run: |
           xcodebuild test \
@@ -70,23 +80,27 @@ jobs:
             -derivedDataPath $HOME/DerivedData \
             -resultBundlePath TestResults.xcresult | xcpretty && exit ${PIPESTATUS[0]}
 
+      # ✅ Debug: List build output directory
       - name: Debug List Build Output
         run: |
           echo "Listing build output directory..."
           ls -R $HOME/DerivedData/Build/Products/Debug-iphonesimulator
 
+      # ✅ Verify test results exist before proceeding
       - name: Verify Test Results Exist
         run: |
           if [ ! -d "TestResults.xcresult" ]; then
             echo "Error: TestResults.xcresult not found!" && exit 1
           fi
 
+      # ✅ Upload test results as an artifact
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
           path: TestResults.xcresult
 
+      # ✅ Generate Code Coverage Report (HTML format)
       - name: Generate Code Coverage Report (HTML format)
         run: |
           DERIVED_DATA_PATH=$HOME/DerivedData
@@ -128,6 +142,7 @@ jobs:
           
           echo "✅ HTML code coverage report generated in 'coverage-report' folder."
 
+      # ✅ Upload Code Coverage HTML Report
       - name: Upload Code Coverage HTML Report
         uses: actions/upload-artifact@v4
         with:
