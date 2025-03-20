@@ -94,7 +94,7 @@ jobs:
           
           ls -R $DERIVED_DATA_PATH
           
-          PROF_DATA_PATH=$(find $DERIVED_DATA_PATH -name "Coverage.profdata" | head -n 1)
+          PROF_DATA_PATH=$(find $DERIVED_DATA_PATH/Build/ProfileData -name "Coverage.profdata" | head -n 1)
           if [ -z "$PROF_DATA_PATH" ]; then echo "Error: No coverage data found!" && exit 1; fi
           
           echo "Found profdata file at: $PROF_DATA_PATH"
