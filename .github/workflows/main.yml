@@ -73,7 +73,7 @@ jobs:
             -resultBundlePath TestResults.xcresult | xcpretty && exit ${PIPESTATUS[0]}
 
       # ✅ Debug Step: List Build Output Files (Added Without Removing Anything)
-      - name: Debug: List Build Output
+      - name: Debug List Build Output
         run: |
           echo "Listing build output directory..."
           ls -R $HOME/DerivedData/Build/Products/Debug-iphonesimulator
