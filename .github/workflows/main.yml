@@ -93,14 +93,14 @@ jobs:
           echo "DerivedData Path: $DERIVED_DATA_PATH"
           
           ls -R $DERIVED_DATA_PATH
-          
-          PROF_DATA_PATH=$(find $DERIVED_DATA_PATH/Build/ProfileData -name "Coverage.profdata" | head -n 1)
+          PROF_DATA_PATH=$(find $DERIVED_DATA_PATH/Build/ProfileData -type f -name "Coverage.profdata" | sort -r | head -n 1)
           if [ -z "$PROF_DATA_PATH" ]; then echo "Error: No coverage data found!" && exit 1; fi
           
           echo "Found profdata file at: $PROF_DATA_PATH"
           
-          PRODUCT_DIR=$(find $DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator -type d -name "*.app" | head -n 1)
-          EXECUTABLE_PATH="$PRODUCT_DIR/$PROJECT_NAME"
+          PRODUCT_DIR=$(find $DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator -type d -name "*.app" | sort -r | head -n 1)
+          EXECUTABLE_PATH=$(find "$PRODUCT_DIR" -type f -executable -name "$PROJECT_NAME" | head -n 1)
+
           if [ ! -f "$EXECUTABLE_PATH" ]; then echo "Error: Executable not found at $EXECUTABLE_PATH" && exit 1; fi
           
           mkdir -p coverage-report
